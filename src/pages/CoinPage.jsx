@@ -2,29 +2,79 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { SingleCoin } from "../config/api";
-import { Box, Divider, Stack, Typography } from "@mui/material";
+import { Box, Button, Divider, Stack, Typography } from "@mui/material";
 import CoinInfo from "../components/CoinInfo";
 import parse from "html-react-parser";
 import { useCoins } from "../context/CoinContext";
 import Loader from "../components/Loader";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 function CoinPage() {
-  const { curr } = useCoins();
   const [coin, setCoin] = useState();
   const [loading, setLoading] = useState();
   const { id } = useParams();
+  const { currency, user, watchlist, setAlert } = useCoins();
 
   useEffect(() => {
     async function fetchCoin() {
-      console.log("inside the coin fetching", id);
       setLoading(true);
       const { data } = await axios.get(SingleCoin(id));
       setCoin(data);
       setLoading(false);
-      console.log(data);
     }
-    if (curr.length === 3) fetchCoin();
+    if (currency.length === 3) fetchCoin();
   }, [id]);
+
+  const inWatchList = watchlist.includes(coin?.id);
+
+  async function addToWatchlist() {
+    const coinRef = doc(db, "watchlist", user?.uid);
+    try {
+      await setDoc(
+        coinRef,
+        {
+          coins: watchlist ? [...watchlist, coin?.id] : [coin?.id],
+        },
+        { merge: true }
+      );
+      setAlert({
+        open: true,
+        message: `${coin?.name} added to watchlist`,
+        type: "success",
+      });
+    } catch (error) {
+      setAlert({
+        open: true,
+        message: error.message,
+        type: "error",
+      });
+    }
+  }
+
+  async function removeFromWatchlist() {
+    const coinRef = doc(db, "watchlist", user?.uid);
+    try {
+      await setDoc(
+        coinRef,
+        {
+          coins: watchlist.filter((watch) => watch !== coin?.id),
+        },
+        { merge: true }
+      );
+      setAlert({
+        open: true,
+        message: `${coin?.name} removed from watchlist`,
+        type: "success",
+      });
+    } catch (error) {
+      setAlert({
+        open: true,
+        message: error.message,
+        type: "error",
+      });
+    }
+  }
 
   return !coin | loading ? (
     <Box
@@ -97,7 +147,6 @@ function CoinPage() {
               {coin?.market_cap_rank}
             </Typography>
           </span>
-
           <span style={{ display: "flex" }}>
             <Typography variant="h6">Current Price:</Typography>
             &nbsp; &nbsp;
@@ -107,7 +156,9 @@ function CoinPage() {
                 fontFamily: "Montserrat",
               }}
             >
-              {coin?.market_data.current_price[curr.toLowerCase()]}
+              {`${
+                coin?.market_data.current_price[currency.toLowerCase()]
+              } ${currency}`}
             </Typography>
           </span>
           <span style={{ display: "flex" }}>
@@ -119,13 +170,26 @@ function CoinPage() {
                 fontFamily: "Montserrat",
               }}
             >
-              {coin?.market_data.market_cap[curr.toLowerCase()]
+              {coin?.market_data.market_cap[currency.toLowerCase()]
                 .toString()
                 .slice(0, -6)}
               M
             </Typography>
           </span>
         </Box>
+        {user && (
+          <Button
+            fullWidth
+            sx={{
+              bgcolor: inWatchList ? "red" : "aqua",
+              color: inWatchList ? "white" : "black",
+              "&:hover": { bgcolor: inWatchList ? "red" : "aqua" },
+            }}
+            onClick={inWatchList ? removeFromWatchlist : addToWatchlist}
+          >
+            {inWatchList ? "Remove from watchlist" : "Add to watchlist"}
+          </Button>
+        )}
       </Box>
       <CoinInfo coin={coin} />
     </Stack>

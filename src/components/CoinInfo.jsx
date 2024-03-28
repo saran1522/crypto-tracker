@@ -8,25 +8,23 @@ import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
 import { Chart } from "react-chartjs-2";
 import DaysButton from "./DaysButton";
+import Loader from "./Loader";
 
 function CoinInfo({ coin }) {
   const [historicData, setHistoricData] = useState(null);
   const [days, setDays] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const { curr } = useCoins();
+  const { currency } = useCoins();
 
   useEffect(() => {
     async function fetchHistoricData() {
-      setLoading(true);
-      const { data } = await axios.get(HistoricalChart(coin.id, days, curr));
+      const { data } = await axios.get(
+        HistoricalChart(coin.id, days, currency)
+      );
       setHistoricData(data.prices);
-      setLoading(false);
-      console.log("historic", data.prices);
     }
     if (coin.id) fetchHistoricData();
-  }, [days, coin.id, curr]);
+  }, [days, coin.id, currency]);
 
-  //   console.log(coin);
   return historicData ? (
     <Container>
       <Line
@@ -41,7 +39,7 @@ function CoinInfo({ coin }) {
           }),
           datasets: [
             {
-              label: `Price ( Past ${days} Days ) in ${curr}`,
+              label: `Price ( Past ${days} Days ) in ${currency}`,
               data: historicData.map((hData) => hData[1]),
               borderColor: "aqua",
             },
@@ -60,7 +58,6 @@ function CoinInfo({ coin }) {
           display: "flex",
           justifyContent: "space-around",
           widht: "100%",
-          //   border: "1px solid red",
           margin: "40px auto",
         }}
       >
@@ -69,7 +66,7 @@ function CoinInfo({ coin }) {
             key={i}
             setDays={setDays}
             value={day.value}
-            selected={day.value === days}
+            selected={day.value == days}
           >
             {day.label}
           </DaysButton>
@@ -77,16 +74,7 @@ function CoinInfo({ coin }) {
       </Box>
     </Container>
   ) : (
-    <Box
-      sx={{
-        width: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <CircularProgress size={200} thickness={1} sx={{ color: "aqua" }} />
-    </Box>
+    <Loader />
   );
 }
 

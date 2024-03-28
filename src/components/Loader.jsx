@@ -1,17 +1,17 @@
-import { Box, LinearProgress } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import React from "react";
 
 function Loader() {
   return (
-    <Box sx={{ display: "flex", justifyContent: "center" }}>
-      <LinearProgress
-        sx={{
-          width: "70%",
-          backgroundColor: "white",
-          color: "green",
-          height: 5,
-        }}
-      />
+    <Box
+      sx={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <CircularProgress size={200} thickness={1} sx={{ color: "aqua" }} />
     </Box>
   );
 }

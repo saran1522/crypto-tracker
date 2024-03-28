@@ -1,5 +1,6 @@
 import {
   AppBar,
+  Button,
   Container,
   InputBase,
   ThemeProvider,
@@ -12,6 +13,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useCoins } from "../context/CoinContext";
 import styled from "@emotion/styled";
+import AuthModal from "./Authentication/AuthModal";
+import UserSidebar from "./UserSidebar";
 
 const logoStyle = {
   flex: 1,
@@ -52,30 +55,32 @@ function Header() {
     },
   });
 
-  const { curr, setCurr } = useCoins();
+  const { currency, setCurrency, user } = useCoins();
   const navigate = useNavigate();
-  //   console.log(curr);
 
   return (
     <ThemeProvider theme={darkTheme}>
       <AppBar color="transparent" position="static">
         <Container>
           <Toolbar>
-            <Typography sx={logoStyle} onClick={() => navigate("/")}>
+            <Typography
+              component={"span"}
+              variant={"body2"}
+              sx={logoStyle}
+              onClick={() => navigate("/")}
+            >
               Crypto Tracker
             </Typography>
-            <form>
-              <Search>
-                <StyledInputBase
-                  // placeholder="Search…"
-                  inputProps={{ "aria-label": "search" }}
-                  value={curr}
-                  onChange={(e) => {
-                    setCurr(e.target.value);
-                  }}
-                />
-              </Search>
-            </form>
+            <Search>
+              <StyledInputBase
+                inputProps={{ "aria-label": "search" }}
+                value={currency}
+                onChange={(e) => {
+                  setCurrency(e.target.value);
+                }}
+              />
+            </Search>
+            {user ? <UserSidebar /> : <AuthModal />}
           </Toolbar>
         </Container>
       </AppBar>

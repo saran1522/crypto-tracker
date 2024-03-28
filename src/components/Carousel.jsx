@@ -30,21 +30,19 @@ const carouselStyle = {
 export default function Caraousel() {
   const [trendingCoins, setTrendingCoins] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { curr } = useCoins();
+  const { currency } = useCoins();
 
   const handleDragStart = (e) => e.preventDefault();
 
   useEffect(() => {
     async function fetchTrendingCoins() {
-      // console.log(`fetching in ${curr}`);
       setLoading(true);
-      const { data } = await axios.get(TrendingCoins(curr));
+      const { data } = await axios.get(TrendingCoins(currency));
       setTrendingCoins(data);
       setLoading(false);
-      // console.log(data);
     }
-    if (curr.length === 3) fetchTrendingCoins();
-  }, [curr]);
+    if (currency.length === 3) fetchTrendingCoins();
+  }, [currency]);
 
   const items = trendingCoins.map((coin) => {
     let profit = coin?.price_change_percentage_24h >= 0;
@@ -76,13 +74,11 @@ export default function Caraousel() {
           </span>
         </span>
         <span style={{ fontSize: 22, fontWeight: 500 }}>
-          {coin?.current_price.toFixed(2)} {curr}
+          {coin?.current_price.toFixed(2)} {currency}
         </span>
       </Link>
     );
   });
-
-  //btc in rupee = 5811743
 
   const responsive = {
     0: {
@@ -92,8 +88,6 @@ export default function Caraousel() {
       items: 4,
     },
   };
-
-  console.log("rendering");
 
   return loading ? (
     <Loader />
