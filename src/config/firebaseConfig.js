@@ -1,11 +1,10 @@
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyA17TrPlwQBji1Q3CMBkOl8D3jG7As_d_Y",
-  authDomain: "crypto-tracker-4e688.firebaseapp.com",
-  projectId: "crypto-tracker-4e688",
-  storageBucket: "crypto-tracker-4e688.appspot.com",
-  messagingSenderId: "641056888850",
-  appId: "1:641056888850:web:6d439bdb7dc4511cb2e0cb",
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID,
 };
 
 export default firebaseConfig;
