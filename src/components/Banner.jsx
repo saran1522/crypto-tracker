@@ -1,7 +1,6 @@
 import { Box, Container, Typography } from "@mui/material";
 import React from "react";
 import Carousel from "./Carousel";
-import CoinsTable from "./CoinsTable";
 
 const bannerStyle = {
   boxStyle: {
@@ -11,9 +10,7 @@ const bannerStyle = {
     height: 400,
     display: "flex",
     flexDirection: "column",
-    // paddingTop: 25,
     justifyContent: "space-around",
-    // alignItems: "center",
   },
   tagline: {
     display: "flex",
@@ -36,9 +33,6 @@ function Banner() {
         <Box
           className={bannerStyle.tagline}
           sx={{
-            //   fontWeight: "bold",
-            //   //   marginBottom: 15,
-            //   fontFamily: "Montserrat",
             textAlign: "center",
           }}
         >

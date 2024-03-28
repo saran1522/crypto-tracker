@@ -15,41 +15,29 @@ import {
   Typography,
   createTheme,
 } from "@mui/material";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { CoinList } from "../config/api";
 import { useCoins } from "../context/CoinContext";
 import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
 
 function CoinsTable() {
   const [search, setSearch] = useState("");
-  const [cryptos, setCryptos] = useState([]);
   const [loading, setLoading] = useState();
   const [page, setPage] = useState(1);
-  const { curr } = useCoins();
+  const { currency, cryptos, fetchCryptos } = useCoins();
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function fetchCryptos() {
-      setLoading(true);
-      const { data } = await axios.get(CoinList(curr));
-      setCryptos(data);
-      setLoading(false);
-      console.log(data);
-    }
-    if (curr.length === 3) fetchCryptos();
-  }, [curr]);
+    setLoading(true);
+    if (currency.length === 3) fetchCryptos();
+    setLoading(false);
+  }, [currency]);
 
   const darkTheme = createTheme({
     palette: {
       mode: "dark",
     },
   });
-
-  const stylePage = {
-    "& .MuiPagination-root": { color: "aqua", backgroundColor: "#171a21" },
-  };
 
   const handleSearch = () => {
     return cryptos.filter(
@@ -74,7 +62,6 @@ function CoinsTable() {
             setSearch(e.target.value);
           }}
         />
-        {/* <TableContainer component={Paper}> */}
         <TableContainer>
           {loading ? (
             <Loader />
@@ -90,7 +77,7 @@ function CoinsTable() {
                         fontFamily: "Montserrat",
                       }}
                       key={head}
-                      align={head === "Coin" ? "" : "right"}
+                      // align={head === "Coin" ? "" : "right"}
                     >
                       {head}
                     </TableCell>
@@ -146,7 +133,7 @@ function CoinsTable() {
                         </TableCell>
                         <TableCell align="right">
                           {/* {numberWithCommas(row.current_price.toFixed(2))} */}
-                          {`${row.current_price.toFixed(2)} ${curr}`}
+                          {`${row.current_price.toFixed(2)} ${currency}`}
                         </TableCell>
                         <TableCell
                           align="right"
@@ -175,16 +162,13 @@ function CoinsTable() {
             setPage(value);
           }}
           sx={{
-            // margin: 5,
             margingTop: "50px",
             width: "100%",
             height: "100px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            // border: "1px solid red",
           }}
-          // className={stylePage}
         />
       </Container>
     </ThemeProvider>
